@@ -13,7 +13,7 @@ public class MusicGun : MonoBehaviour
 
     public Camera m_fpsCamera;
     public ParticleSystem m_muzzleFlash;
-    public ParticleSystem m_impactEffet;
+    public GameObject m_impactEffect;
     public Text m_fireModeText;
 
     private float m_nextTimeToFire = 0f;
@@ -126,7 +126,10 @@ public class MusicGun : MonoBehaviour
             {
                 _sampleCude.ChangeMusicGroup(m_selectedMode);
             }
+            GameObject _impactGO = Instantiate(m_impactEffect, _hit.point, Quaternion.LookRotation(_hit.normal));
+            Destroy(_impactGO, 2.0f);
         }
+
     }
 
     void Pause()
@@ -141,6 +144,7 @@ public class MusicGun : MonoBehaviour
             {
                 _sampleCude.Pause();
             }
+            
         }
     }
 

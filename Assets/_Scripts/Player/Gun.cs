@@ -14,7 +14,7 @@ public class Gun : MonoBehaviour
 
     public Camera m_fpsCamera;
     public ParticleSystem m_muzzleFlash;
-    public ParticleSystem m_impactEffet;
+    public GameObject m_impactEffect;
 
     private float m_nextTimeToFire = 0f;
 
@@ -48,8 +48,8 @@ public class Gun : MonoBehaviour
 
 			}
 
-			//Gameobject _impactGO = Instantiate(m_impactEffet, _hit.point, Quaternion.LookRotation(_hit.normal));
-			//Destroy(_impactGO, 2.0f);
+			GameObject _impactGO = Instantiate(m_impactEffect, _hit.point, Quaternion.LookRotation(_hit.normal));
+			Destroy(_impactGO, 2.0f);
 		}
 	}
 }
