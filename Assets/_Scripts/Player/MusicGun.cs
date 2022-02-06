@@ -120,7 +120,6 @@ public class MusicGun : MonoBehaviour
         RaycastHit _hit;
         if (Physics.Raycast(m_fpsCamera.transform.position, m_fpsCamera.transform.forward, out _hit, m_range))
         {
-            Debug.Log(_hit.transform.name);
             SampleCube _sampleCude = _hit.transform.GetComponent<SampleCube>();
             if (_sampleCude != null)
             {
@@ -138,7 +137,6 @@ public class MusicGun : MonoBehaviour
         RaycastHit _hit;
         if (Physics.Raycast(m_fpsCamera.transform.position, m_fpsCamera.transform.forward, out _hit, m_range))
         {
-            Debug.Log(_hit.transform.name);
             SampleCube _sampleCude = _hit.transform.GetComponent<SampleCube>();
             if (_sampleCude != null)
             {
@@ -154,7 +152,6 @@ public class MusicGun : MonoBehaviour
         RaycastHit _hit;
         if (Physics.Raycast(m_fpsCamera.transform.position, m_fpsCamera.transform.forward, out _hit, m_range))
         {
-            Debug.Log(_hit.transform.name);
             SampleCube _sampleCude = _hit.transform.GetComponent<SampleCube>();
             if (_sampleCude != null)
             {

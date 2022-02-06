@@ -40,8 +40,6 @@ public class Gun : MonoBehaviour
         RaycastHit _hit;
         if(Physics.Raycast(m_fpsCamera.transform.position, m_fpsCamera.transform.forward, out _hit, m_range))
         {
-            Debug.Log(_hit.transform.name);
-
 			if (_hit.rigidbody != null)
 			{
 				_hit.rigidbody.AddForce(-_hit.normal * m_hitForce);

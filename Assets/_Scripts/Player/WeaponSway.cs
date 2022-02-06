@@ -53,29 +53,16 @@ public class WeaponSway : MonoBehaviour
 		Vector3 v3FinalPosition = new Vector3(fMovementX, fMovementY, 0);
 		transform.localPosition = Vector3.Lerp(transform.localPosition, v3FinalPosition + m_v3InitialPosition, Time.deltaTime * m_fSmoothAmount);
 
-			Vector3 fwd = transform.TransformDirection(Vector3.left);
-		// Shoots a rigid body object pushing them over
-		if (Input.GetMouseButtonDown(0))
-		{
-
-			if (Physics.Raycast(transform.position, fwd, out Hit, 50))
-			{
-				//print("There is something in front of the object!");
-				if (Hit.rigidbody)
-					Hit.rigidbody.velocity = fwd * 20;
-			}
-		}
 		if(!m_playerScript.m_bSprintToWalk)
 		{
 			if (Input.GetButton("Sprint"))
 			{
-				LerpSway = new Vector3(transform.localRotation.x, 90.0f, m_fSprintTilt);
+				LerpSway = new Vector3(m_fSprintTilt, transform.localRotation.y, transform.localRotation.z);
 				transform.localEulerAngles = Vector3.Lerp(transform.localRotation.eulerAngles, LerpSway, m_fLerpTime * Time.deltaTime);
 			}
 			else
 			{
-				//transform.localRotation = m_qInitialRotation;
-				transform.localEulerAngles = Vector3.Lerp(transform.localRotation.eulerAngles, m_qInitialRotation.eulerAngles, Time.deltaTime);
+				transform.localEulerAngles = Vector3.Lerp(transform.localRotation.eulerAngles, m_qInitialRotation.eulerAngles, m_fLerpTime * Time.deltaTime);
 			}
 		}
 	}
