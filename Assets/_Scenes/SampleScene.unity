@@ -348,23 +348,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7593301906011977597, guid: 899afbdd7fb263449b82c105c9ed0443, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9762616
+      value: 0.97629607
       objectReference: {fileID: 0}
     - target: {fileID: 7593301906011977597, guid: 899afbdd7fb263449b82c105c9ed0443, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.21659482
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7593301906011977597, guid: 899afbdd7fb263449b82c105c9ed0443, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7593301906011977597, guid: 899afbdd7fb263449b82c105c9ed0443, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0.2164396
       objectReference: {fileID: 0}
     - target: {fileID: 7593301906011977597, guid: 899afbdd7fb263449b82c105c9ed0443, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 25.018
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7593301906011977597, guid: 899afbdd7fb263449b82c105c9ed0443, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -372,7 +372,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7593301906011977597, guid: 899afbdd7fb263449b82c105c9ed0443, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 25
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -8210634872224487860, guid: 899afbdd7fb263449b82c105c9ed0443, type: 3}
@@ -6072,11 +6072,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c27d654cae90edf49bbf51ac8e6f0f5e, type: 3}
---- !u!4 &1111382311 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 80741215148547802, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-  m_PrefabInstance: {fileID: 80741216187566077}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1137667368 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1448569839314844476, guid: 899afbdd7fb263449b82c105c9ed0443, type: 3}
@@ -10912,66 +10907,6 @@ PrefabInstance:
     - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
       propertyPath: m_head
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_jump
-      value: 32
-      objectReference: {fileID: 0}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_sprint
-      value: 304
-      objectReference: {fileID: 0}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_bCanSprint
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_fSlopeForce
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_fSlopeSpeed
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_bHoldToSprint
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_cameraTransform
-      value: 
-      objectReference: {fileID: 1111382311}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_fSlopeRayLength
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_fSlideSlopeLimit
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_fSlideSlopeSpeed
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_fSlideSpeedUpHill
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_bWillSlideOnSlopes
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_fSlideAcceleration
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_fSlideDeceleration
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
-      propertyPath: m_fSpeedToStartSlide
-      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 80741215090179079, guid: c88c7336b8622ac42934144acdd923c4, type: 3}
       propertyPath: m_fMaxSlideSlopeSpeed

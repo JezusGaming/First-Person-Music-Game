@@ -58,7 +58,6 @@ public class PlayerEditor : Editor
 	SerializedProperty m_fSideStrafeSpeed;
 
 	SerializedProperty m_fSlideSpeed;
-	SerializedProperty m_fSlideSpeedUpHill;
 	SerializedProperty m_fSpeedToStartSlide;
 	SerializedProperty m_fSlideSlopeSpeed;
 	SerializedProperty m_fSlideSlopeLimit;
@@ -117,7 +116,6 @@ public class PlayerEditor : Editor
 		m_fSideStrafeSpeed = this.serializedObject.FindProperty("m_fSideStrafeSpeed");
 
 		m_fSlideSpeed = this.serializedObject.FindProperty("m_fSlideSpeed");
-		m_fSlideSpeedUpHill = this.serializedObject.FindProperty("m_fSlideSpeedUpHill");
 		m_fSpeedToStartSlide = this.serializedObject.FindProperty("m_fSpeedToStartSlide");
 		m_fSlideSlopeSpeed = this.serializedObject.FindProperty("m_fSlideSlopeSpeed");
 		m_fSlideSlopeLimit = this.serializedObject.FindProperty("m_fSlideSlopeLimit");
@@ -238,7 +236,6 @@ public class PlayerEditor : Editor
 		if (m_bShowSlideSettings)
 		{
 			m_fSlideSpeed.floatValue = EditorGUILayout.FloatField(new GUIContent("Slide Speed", "How fast the player slides"), _playerScript.m_fSlideSpeed);
-			m_fSlideSpeedUpHill.floatValue = EditorGUILayout.FloatField(new GUIContent("Up Hill Slide Speed", "How fast the player slides up hills"), _playerScript.m_fSlideSpeedUpHill);
 			m_fSpeedToStartSlide.floatValue = EditorGUILayout.FloatField(new GUIContent("Speed To Start Slide", "What speed the player needs to be above to start a slide"), _playerScript.m_fSpeedToStartSlide);
 			m_fSlideSlopeSpeed.floatValue = EditorGUILayout.FloatField(new GUIContent("Slide Slope Speed", "How fast the player slides down a slope"), _playerScript.m_fSlideSlopeSpeed);
 			m_fSlideSlopeLimit.floatValue = EditorGUILayout.FloatField(new GUIContent("Slide Slope Limit", "How much of a slope the terrain needs to be to slide down while sliding"), _playerScript.m_fSlideSlopeLimit);

@@ -131,16 +131,13 @@ public class MyPlayer : MonoBehaviour
 	[Header("Slide Settings")]
 	public float m_fSlideSpeed = 10.0f;
 	public float m_fSlideSlopeSpeed = 0.2f;
-	public float m_fSlideSpeedUpHill = 7.0f;
 	public float m_fSlideSlopeLimit = 20.0f;
 	public float m_fSlideAcceleration = 1.0f;
 	public float m_fSpeedToStartSlide = 5.0f;
 	public float m_fSlideDeceleration = 2.0f;
 	private bool m_bSlide;
 	private bool m_bSlideStart;
-	private float m_fOriginalSlideAcceleration;
 	private float m_fOriginalSlideSpeed;
-	private bool m_bOnSlope;
 	private float m_fOldYPos;
 
 	// Used to store the move direction normalised for the movment
@@ -176,7 +173,6 @@ public class MyPlayer : MonoBehaviour
 		// Gets access to the player character controller
 		FPSCC = GetComponent<CharacterController>();
 
-		m_fOriginalSlideAcceleration = m_fSlideAcceleration;
 		m_fOriginalSlideSpeed = m_fSlideSpeed;
 
 		m_standingHeight = FPSCC.height;
@@ -189,7 +185,7 @@ public class MyPlayer : MonoBehaviour
 	//--------------------------------------------------------------------------------
 	private void Update()
 	{
-		Debug.Log(m_v3PlayerVelocity);
+		//Debug.Log(m_v3PlayerVelocity);
 		// Sets the FOV of the camera
 		Camera.main.fieldOfView = m_fFieldOfView;
 
@@ -719,8 +715,9 @@ public class MyPlayer : MonoBehaviour
 			if(m_bCrouched && Mathf.Abs(m_v3PlayerVelocity.x) > m_fSpeedToStartSlide || m_bCrouched && Mathf.Abs(m_v3PlayerVelocity.z) > m_fSpeedToStartSlide)
 			{
 				//-------------if we are on a slideable slope then slide down slope-------------
-				if (OnSlope())
+				if (OnSlope() && Vector3.Angle(m_v3HitPointNormal, Vector3.up) > m_fSlideSlopeLimit)
 				{
+					Debug.Log(Vector3.Angle(m_v3HitPointNormal, Vector3.up));
 					// Stores the direction the player wants to move
 					Vector3 v3DesDir;
 					// Sets the desired direction based on the velocity
@@ -728,59 +725,29 @@ public class MyPlayer : MonoBehaviour
 					// Sets the desired speed
 					var fDesSpeed = v3DesDir.magnitude;
 
-					bool _bInputDuringSlide = false;
-
-					if(m_fHorizontalMovement == 0 && m_fVerticalMovement == 0)
-					{
-						_bInputDuringSlide = false;
-					}
-					else if(m_fHorizontalMovement != 0 || m_fVerticalMovement != 0)
-					{
-						_bInputDuringSlide = true;
-					}
-
-					
-
 					if (m_bSlideStart)
 					{
-						m_fOriginalSlideAcceleration = m_fSlideAcceleration;
+						m_fOriginalSlideSpeed = m_fSlideSpeed;
 						m_bSlideStart = false;
-					}
-					if(_bInputDuringSlide)
-					{
-						m_fSlideAcceleration -= m_fSlideDeceleration * Time.deltaTime;
 					}
 
 					m_v3HitPointNormal = SlopeHit().normal;
-					if (Vector3.Angle(m_v3HitPointNormal, Vector3.up) > m_fSlideSlopeLimit)
+					m_v3PlayerVelocity += new Vector3(m_v3HitPointNormal.x, -m_v3HitPointNormal.y, m_v3HitPointNormal.z) * m_fSlideSlopeSpeed;
+
+					if (m_fOldYPos < transform.position.y)
 					{
-						m_v3PlayerVelocity += new Vector3(m_v3HitPointNormal.x, -m_v3HitPointNormal.y, m_v3HitPointNormal.z) * m_fSlideSlopeSpeed;
-						
-						m_bOnSlope = true;
-						if (!_bInputDuringSlide)
-						{
-							m_fSlideAcceleration += m_fSlideDeceleration * Time.deltaTime;
-						}
+						m_fSlideSpeed -= m_fSlideDeceleration * Time.deltaTime;
 					}
-					else
+					else if (m_fOldYPos > transform.position.y)
 					{
-						m_bOnSlope = false;
+						m_fSlideSpeed = Vector3.Angle(m_v3HitPointNormal, Vector3.up);
 					}
 
-					if (m_fSlideAcceleration < 0)
+					if (m_fSlideSpeed <= 0)
 					{
-						m_fSlideAcceleration = 0;
+						m_fSlideSpeed = 0;
 					}
-					else if (m_fSlideAcceleration >= m_fOriginalSlideAcceleration)
-					{
-						m_fSlideAcceleration = m_fOriginalSlideAcceleration;
-					}
-
-					if(m_fOldYPos < transform.position.y)
-					{
-						m_fSlideSpeed = m_fSlideSpeedUpHill;
-					}
-					else if(m_fOldYPos > transform.position.y)
+					if (m_fSlideSpeed >= m_fOriginalSlideSpeed)
 					{
 						m_fSlideSpeed = m_fOriginalSlideSpeed;
 					}
@@ -803,23 +770,23 @@ public class MyPlayer : MonoBehaviour
 
 					if (m_bSlideStart)
 					{
-						m_fOriginalSlideAcceleration = m_fSlideAcceleration;
+						m_fOriginalSlideSpeed = m_fSlideSpeed;
 						m_bSlideStart = false;
 					}
 
-					m_fSlideAcceleration -= m_fSlideDeceleration * Time.deltaTime;
+					m_fSlideSpeed -= m_fSlideSpeed * Time.deltaTime;
 
-					if (m_fSlideAcceleration < 0)
+					if (m_fSlideSpeed < 0)
 					{
-						m_fSlideAcceleration = 0;
+						m_fSlideSpeed = 0;
 					}
 				}
 			}
-			else if(!m_bCrouched || m_bCrouched && Mathf.Abs(m_v3PlayerVelocity.x) <= m_fSpeedToStartSlide && !m_bOnSlope || m_bCrouched && Mathf.Abs(m_v3PlayerVelocity.z) <= m_fSpeedToStartSlide && !m_bOnSlope)
+			else if(!m_bCrouched || m_bCrouched && Mathf.Abs(m_v3PlayerVelocity.x) <= m_fSpeedToStartSlide || m_bCrouched && Mathf.Abs(m_v3PlayerVelocity.z) <= m_fSpeedToStartSlide)
 			{
 				if(!m_bSlideStart)
 				{
-					m_fSlideAcceleration = m_fOriginalSlideAcceleration;
+					m_fSlideSpeed = m_fOriginalSlideSpeed;
 				}
 				m_bSlideStart = true;
 				m_bSlide = false;

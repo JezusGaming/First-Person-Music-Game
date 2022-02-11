@@ -1,5 +1,45 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &80741215175092066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 79447181890908452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d8e63103e6833b42976b9d99104d895, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_range: 100
+  m_fireRate: 9
+  m_band: 0
+  m_selectedMode: 0
+  m_fpsCamera: {fileID: 80741215148547797}
+  m_muzzleFlash: {fileID: 80741216348836589}
+  m_impactEffect: {fileID: 100002, guid: 00fedc70b62a31e448e8ccc298257b56, type: 3}
+  m_fireModeText: {fileID: 80741214902798205}
+--- !u!114 &80741216248444709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 79717340125419397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b2e735827d5ec34393229b803d16af2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damage: 10
+  m_range: 100
+  m_hitForce: 100
+  m_fireRate: 9
+  m_selectedMode: 0
+  m_fpsCamera: {fileID: 80741215148547797}
+  m_muzzleFlash: {fileID: 80741214870645612}
+  m_impactEffect: {fileID: 100002, guid: 20b31fcfaed0cb842a56fbbe2419428f, type: 3}
 --- !u!1 &80741214823037677
 GameObject:
   m_ObjectHideFlags: 0
@@ -240,7 +280,6 @@ MonoBehaviour:
   m_bHoldToSprint: 1
   m_sprint: 304
   m_cameraTransform: {fileID: 80741215148547802}
-  m_head: {fileID: 80741216356646861}
   m_fCameraChangeStanceSpeed: 0.1
   m_fStandCameraYOffset: 0.75
   m_fFieldOfView: 90
@@ -254,9 +293,10 @@ MonoBehaviour:
   m_fCrouchSpeed: 5
   m_fProneSpeed: 2.5
   m_fJumpSpeed: 8
-  m_fRunAcceleration: 10
-  m_fRunDeacceleration: 15
-  m_fAirDecceleration: 100
+  m_fGroundAcceleration: 10
+  m_fGroundDeceleration: 15
+  m_fAirAcceleration: 10
+  m_fAirDeceleration: 100
   m_fAirControl: 0.3
   m_fSideStrafeAcceleration: 100
   m_fSideStrafeSpeed: 10
@@ -264,14 +304,16 @@ MonoBehaviour:
   m_fCrouchCameraYOffset: 0.5
   m_fProneCameraYOffset: 0.25
   m_proneHeight: 1
-  m_standingHeight: 2
   m_crouchHeight: 1.5
-  m_fSlopeSpeed: 8
+  m_fSlopeSpeed: 1
+  m_fSlopeRayLength: 2
+  m_fSlopeForce: 5
   m_fSlideSpeed: 10
-  m_fSlideAcceleration: 100
-  m_fStartSlide: 7.5
-  m_fSlopeLimitSlide: 25
-  m_v3PlayerVelocity: {x: 0, y: 0, z: 0}
+  m_fSlideSlopeSpeed: 0.2
+  m_fSlideSlopeLimit: 5
+  m_fSlideAcceleration: 1
+  m_fSpeedToStartSlide: 5
+  m_fSlideDeceleration: 20
 --- !u!1 &80741215148547803
 GameObject:
   m_ObjectHideFlags: 0
@@ -370,26 +412,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_player: {fileID: 80741216356646861}
---- !u!114 &80741215175092066
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 79447181890908452}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d8e63103e6833b42976b9d99104d895, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_range: 100
-  m_fireRate: 9
-  m_band: 0
-  m_selectedMode: 0
-  m_fpsCamera: {fileID: 80741215148547797}
-  m_muzzleFlash: {fileID: 80741216348836589}
-  m_impactEffect: {fileID: 100002, guid: 00fedc70b62a31e448e8ccc298257b56, type: 3}
-  m_fireModeText: {fileID: 80741214902798205}
 --- !u!1 &80741215543637004
 GameObject:
   m_ObjectHideFlags: 0
@@ -468,26 +490,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_selectedWeapon: 0
---- !u!114 &80741216248444709
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 79717340125419397}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b2e735827d5ec34393229b803d16af2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_damage: 10
-  m_range: 100
-  m_hitForce: 100
-  m_fireRate: 9
-  m_selectedMode: 0
-  m_fpsCamera: {fileID: 80741215148547797}
-  m_muzzleFlash: {fileID: 80741214870645612}
-  m_impactEffect: {fileID: 100002, guid: 20b31fcfaed0cb842a56fbbe2419428f, type: 3}
 --- !u!1 &80741216356646866
 GameObject:
   m_ObjectHideFlags: 0
