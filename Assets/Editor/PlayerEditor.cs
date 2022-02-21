@@ -6,7 +6,7 @@ public class PlayerEditor : Editor
 	protected static bool m_bShowFunctions = true;
 	protected static bool m_bShowKeyBindings = true;
 	protected static bool m_bShowCameraSettings = true;
-	protected static bool m_bShowStanceSettings = false;
+	protected static bool m_bShowStanceSettings = true;
 	protected static bool m_bShowGroundMovement = true;
 	protected static bool m_bShowAirMovement = true;
 	protected static bool m_bShowSlideSettings = true;
@@ -38,11 +38,12 @@ public class PlayerEditor : Editor
 
 	SerializedProperty m_fCrouchCameraYOffset;
 	SerializedProperty m_crouchHeight;
-	SerializedProperty m_fProneCameraYOffset ;
+	SerializedProperty m_fProneCameraYOffset;
 	SerializedProperty m_proneHeight;
 
 	SerializedProperty m_fGravity;
 	SerializedProperty m_fFriction;
+	SerializedProperty m_bSprintToWalk;
 	SerializedProperty m_fWalkSpeed;
 	SerializedProperty m_fRunSpeed;
 	SerializedProperty m_fCrouchSpeed;
@@ -101,6 +102,7 @@ public class PlayerEditor : Editor
 
 		m_fGravity = this.serializedObject.FindProperty("m_fGravity");
 		m_fFriction = this.serializedObject.FindProperty("m_fFriction");
+		m_bSprintToWalk = this.serializedObject.FindProperty("m_bSprintToWalk");
 		m_fWalkSpeed = this.serializedObject.FindProperty("m_fWalkSpeed");
 		m_fRunSpeed = this.serializedObject.FindProperty("m_fRunSpeed");
 		m_fCrouchSpeed = this.serializedObject.FindProperty("m_fCrouchSpeed");
@@ -161,7 +163,6 @@ public class PlayerEditor : Editor
 		m_bShowCameraSettings = EditorGUILayout.Foldout(m_bShowCameraSettings, "Camera Settings");
 		if(m_bShowCameraSettings)
 		{
-			//Need to serealize the pos rot and scale to do transform mayeb
 			m_cameraTransform.objectReferenceValue = EditorGUILayout.ObjectField("Camera Transform", _playerScript.m_cameraTransform, typeof(Transform), true) as Transform;
 			m_fCameraChangeStanceSpeed.floatValue = EditorGUILayout.FloatField(new GUIContent("Camera Stance Speed", "How fast the camera lerps between crouch, prone, etc"), _playerScript.m_fCameraChangeStanceSpeed);
 			m_fStandCameraYOffset.floatValue = EditorGUILayout.FloatField(new GUIContent("Camera Standing Y Offset", "Used to move the camera to the desired head position"), _playerScript.m_fStandCameraYOffset);
@@ -198,6 +199,7 @@ public class PlayerEditor : Editor
 			m_fWalkSpeed.floatValue = EditorGUILayout.FloatField(new GUIContent("Walk Speed", "Max speed to Walk at"), _playerScript.m_fWalkSpeed);
 			if (_playerScript.m_bCanSprint)
 			{
+				m_bSprintToWalk.boolValue = EditorGUILayout.Toggle(new GUIContent("Sprint To Walk", "Makes it so sprinting makes the player walk"), _playerScript.m_bSprintToWalk);
 				m_fRunSpeed.floatValue = EditorGUILayout.FloatField(new GUIContent("Run Speed", "Max speed to run at"), _playerScript.m_fRunSpeed);
 			}
 			if (_playerScript.m_bCanCrouch)
@@ -231,27 +233,40 @@ public class PlayerEditor : Editor
 			}
 		}
 
-		EditorGUILayout.LabelField("----------------------------------------------------------------------", EditorStyles.boldLabel);
-		m_bShowSlideSettings = EditorGUILayout.Foldout(m_bShowSlideSettings, "Slide Settings");
-		if (m_bShowSlideSettings)
+		if (_playerScript.m_bWillSlideOnSlopes)
 		{
-			m_fSlideSpeed.floatValue = EditorGUILayout.FloatField(new GUIContent("Slide Speed", "How fast the player slides"), _playerScript.m_fSlideSpeed);
-			m_fSpeedToStartSlide.floatValue = EditorGUILayout.FloatField(new GUIContent("Speed To Start Slide", "What speed the player needs to be above to start a slide"), _playerScript.m_fSpeedToStartSlide);
-			m_fSlideSlopeSpeed.floatValue = EditorGUILayout.FloatField(new GUIContent("Slide Slope Speed", "How fast the player slides down a slope"), _playerScript.m_fSlideSlopeSpeed);
-			m_fSlideSlopeLimit.floatValue = EditorGUILayout.FloatField(new GUIContent("Slide Slope Limit", "How much of a slope the terrain needs to be to slide down while sliding"), _playerScript.m_fSlideSlopeLimit);
-			m_fSlideAcceleration.floatValue = EditorGUILayout.FloatField(new GUIContent("Slide Acceleration", "How much to accelerate to reach slide speed"), _playerScript.m_fSlideAcceleration);
-			m_fSlideDeceleration.floatValue = EditorGUILayout.FloatField(new GUIContent("Slide Deceleration", "How much to slow down when sliding"), _playerScript.m_fSlideDeceleration);
+			EditorGUILayout.LabelField("----------------------------------------------------------------------", EditorStyles.boldLabel);
+			m_bShowSlideSettings = EditorGUILayout.Foldout(m_bShowSlideSettings, "Slide Settings");
+			if (m_bShowSlideSettings)
+			{
+				if (_playerScript.m_bCanSlide)
+				{
+					m_fSlideSpeed.floatValue = EditorGUILayout.FloatField(new GUIContent("Slide Speed", "How fast the player slides"), _playerScript.m_fSlideSpeed);
+					m_fSpeedToStartSlide.floatValue = EditorGUILayout.FloatField(new GUIContent("Speed To Start Slide", "What speed the player needs to be above to start a slide"), _playerScript.m_fSpeedToStartSlide);
+					m_fSlideSlopeSpeed.floatValue = EditorGUILayout.FloatField(new GUIContent("Slide Slope Speed", "How fast the player slides down a slope"), _playerScript.m_fSlideSlopeSpeed);
+					m_fSlideSlopeLimit.floatValue = EditorGUILayout.FloatField(new GUIContent("Slide Slope Limit", "How much of a slope the terrain needs to be to slide down while sliding"), _playerScript.m_fSlideSlopeLimit);
+					m_fSlideAcceleration.floatValue = EditorGUILayout.FloatField(new GUIContent("Slide Acceleration", "How much to accelerate to reach slide speed"), _playerScript.m_fSlideAcceleration);
+					m_fSlideDeceleration.floatValue = EditorGUILayout.FloatField(new GUIContent("Slide Deceleration", "How much to slow down when sliding"), _playerScript.m_fSlideDeceleration);
+				}
+			}
 		}
 
-		EditorGUILayout.LabelField("----------------------------------------------------------------------", EditorStyles.boldLabel);
-		m_bShowSlopeSettings = EditorGUILayout.Foldout(m_bShowSlopeSettings, "Slope Settings");
-		if (m_bShowSlopeSettings)
+		
 		{
-			m_fSlopeSpeed.floatValue = EditorGUILayout.FloatField(new GUIContent("Slope Speed", "How fast the player gets pushed down a slope"), _playerScript.m_fSlopeSpeed);
-			m_fSlopeForce.floatValue = EditorGUILayout.FloatField(new GUIContent("Slope Force", "How much force to apply to the players Y to stop it bouncing down slopes"), _playerScript.m_fSlopeForce);
-			m_fSlopeRayLength.floatValue = EditorGUILayout.FloatField(new GUIContent("Slope Raycast Length", "How far to raycast down, starts form half the player height"), _playerScript.m_fSlopeRayLength);
+			EditorGUILayout.LabelField("----------------------------------------------------------------------", EditorStyles.boldLabel);
+			m_bShowSlopeSettings = EditorGUILayout.Foldout(m_bShowSlopeSettings, "Slope Settings");
+			if (m_bShowSlopeSettings)
+			{
+				if (_playerScript.m_bWillSlideOnSlopes)
+				{
+					m_fSlopeSpeed.floatValue = EditorGUILayout.FloatField(new GUIContent("Slope Speed", "How fast the player gets pushed down a slope"), _playerScript.m_fSlopeSpeed);
+				}
+				m_fSlopeForce.floatValue = EditorGUILayout.FloatField(new GUIContent("Slope Force", "How much force to apply to the players Y to stop it bouncing down slopes"), _playerScript.m_fSlopeForce);
+				m_fSlopeRayLength.floatValue = EditorGUILayout.FloatField(new GUIContent("Slope Raycast Length", "How far to raycast down, starts form half the player height"), _playerScript.m_fSlopeRayLength);
+			}
+			EditorGUILayout.LabelField("----------------------------------------------------------------------", EditorStyles.boldLabel);
 		}
-		EditorGUILayout.LabelField("----------------------------------------------------------------------", EditorStyles.boldLabel);
+		
 		this.serializedObject.ApplyModifiedProperties();
 		//base.OnInspectorGUI();
 		//HERE there should be some values that cross over if one thing is ticked for example slide and slope i think bothe use slope force, idk what else.

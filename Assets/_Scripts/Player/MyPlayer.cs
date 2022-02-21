@@ -4,22 +4,37 @@ using UnityEngine;
 public class MyPlayer : MonoBehaviour
 {
 	[Header("Enable Funtions")]
+	// Used to turn sprint function off
 	public bool m_bCanSprint = false;
+	// Used to turn jump function off
 	public bool m_bCanJump = false;
+	// Used to turn crouch function off
 	public bool m_bCanCrouch = false;
+	// Used to turn prone function off
 	public bool m_bCanProne = false;
+	// Used to turn slide function off
 	public bool m_bCanSlide = false;
+	// Used to turn slope function off
 	public bool m_bWillSlideOnSlopes = false;
+	// Used to turn strafe function off
 	public bool m_bCanStrafe = false;
 
 	[Header("KeyBindings")]
+	// Used to change button press to button hold 
 	public bool m_bHoldToJump;
+	// Used to set the player control for jump using the keycodes
 	public KeyCode m_jump = KeyCode.Space;
+	// Used to change button press to button hold 
 	public bool m_bHoldToCrouch;
+	// Used to set the player control for crouch using the keycodes
 	public KeyCode m_crouch = KeyCode.C;
+	// Used to change button press to button hold 
 	public bool m_bHoldToProne;
+	// Used to set the player control for prone using the keycodes
 	public KeyCode m_prone = KeyCode.Z;
+	// Used to change button press to button hold 
 	public bool m_bHoldToSprint;
+	// Used to set the player control for sprint using the keycodes
 	public KeyCode m_sprint = KeyCode.LeftShift;
 
 	[Header("Camera Settings")]
@@ -107,7 +122,9 @@ public class MyPlayer : MonoBehaviour
 	private bool m_bProned = false;
 
 	[Header("Slope Settings")]
+	// Used for the speed when on a slope over the slope limit
 	public float m_fSlopeSpeed = 8.0f;
+	// The length of the ray cast for slope dectection
 	public float m_fSlopeRayLength = 2.0f;
 	// may need to be visible for sliding values
 	public float m_fSlopeForce = 20.0f;
@@ -129,16 +146,30 @@ public class MyPlayer : MonoBehaviour
 	}
 
 	[Header("Slide Settings")]
+	// Used to set how fast to slide
 	public float m_fSlideSpeed = 10.0f;
+	// Used to set how fast to slide down slopes while sliding
 	public float m_fSlideSlopeSpeed = 0.2f;
+	// Used to determine if the slide should slide down a slope or go straight based on the slope limit
 	public float m_fSlideSlopeLimit = 20.0f;
+	// Used to accelerate the player to reach the slide speed
 	public float m_fSlideAcceleration = 1.0f;
+	// Used to start a slide if the player is over the speed
+	// for example if they are in the air and are faster then the speed set below then they will slide when landing
 	public float m_fSpeedToStartSlide = 5.0f;
+	// How fast the slide will come to a stop
 	public float m_fSlideDeceleration = 2.0f;
+	// Used to check if player is currently sliding
 	private bool m_bSlide;
+	// Used to check if it is the start of a slide
 	private bool m_bSlideStart;
+	// Stores the original speed
 	private float m_fOriginalSlideSpeed;
+	// Stores the Y pos of last frame
 	private float m_fOldYPos;
+
+	// Used to change the collider height and centre for stance changing
+	private CapsuleCollider m_capsuleCollider;
 
 	// Used to store the move direction normalised for the movment
 	private Vector3 m_v3MoveDirectionNorm = Vector3.zero;
@@ -173,8 +204,12 @@ public class MyPlayer : MonoBehaviour
 		// Gets access to the player character controller
 		FPSCC = GetComponent<CharacterController>();
 
+		m_capsuleCollider = GetComponent<CapsuleCollider>();
+
+		// Sets the original speed to the speed set on awake
 		m_fOriginalSlideSpeed = m_fSlideSpeed;
 
+		// Sets the standing height to the hieght of the character controller
 		m_standingHeight = FPSCC.height;
 	}
 
@@ -185,7 +220,6 @@ public class MyPlayer : MonoBehaviour
 	//--------------------------------------------------------------------------------
 	private void Update()
 	{
-		//Debug.Log(m_v3PlayerVelocity);
 		// Sets the FOV of the camera
 		Camera.main.fieldOfView = m_fFieldOfView;
 
@@ -245,16 +279,28 @@ public class MyPlayer : MonoBehaviour
 		{
 			// Set the camera's position to the transform
 			SetCameraYPos(m_fCrouchCameraYOffset);
+			FPSCC.height = Mathf.Lerp(FPSCC.height, m_crouchHeight, m_fCameraChangeStanceSpeed);
+			m_capsuleCollider.height = Mathf.Lerp(m_capsuleCollider.height, m_crouchHeight, m_fCameraChangeStanceSpeed);
+			FPSCC.center = Vector3.Lerp(FPSCC.center, new Vector3(0,m_crouchHeight / 2, 0), m_fCameraChangeStanceSpeed);
+			m_capsuleCollider.center = Vector3.Lerp(m_capsuleCollider.center, new Vector3(0, m_crouchHeight / 2, 0), m_fCameraChangeStanceSpeed);
 		}
 		else if (m_bProned)
 		{
 			// Set the camera's position to the transform
 			SetCameraYPos(m_fProneCameraYOffset);
+			FPSCC.height = Mathf.Lerp(FPSCC.height, m_proneHeight, m_fCameraChangeStanceSpeed);
+			m_capsuleCollider.height = Mathf.Lerp(m_capsuleCollider.height, m_proneHeight, m_fCameraChangeStanceSpeed);
+			FPSCC.center = Vector3.Lerp(FPSCC.center, new Vector3(0, m_proneHeight / 2, 0), m_fCameraChangeStanceSpeed);
+			m_capsuleCollider.center = Vector3.Lerp(m_capsuleCollider.center, new Vector3(0, m_proneHeight / 2, 0), m_fCameraChangeStanceSpeed);
 		}
 		else
 		{
 			// Set the camera's position to the transform
 			SetCameraYPos(m_fStandCameraYOffset);
+			FPSCC.height = Mathf.Lerp(FPSCC.height, m_standingHeight, m_fCameraChangeStanceSpeed);
+			m_capsuleCollider.height = Mathf.Lerp(m_capsuleCollider.height, m_standingHeight, m_fCameraChangeStanceSpeed);
+			FPSCC.center = Vector3.Lerp(FPSCC.center, new Vector3(0, m_standingHeight / 2, 0), m_fCameraChangeStanceSpeed);
+			m_capsuleCollider.center = Vector3.Lerp(m_capsuleCollider.center, new Vector3(0, m_standingHeight / 2, 0), m_fCameraChangeStanceSpeed);
 		}
 
 	}
@@ -406,32 +452,38 @@ public class MyPlayer : MonoBehaviour
 		// Changes the players stance from prone, crouch, sprint based on the input
 		ChangeStance();
 
+		// Added checks and moved accelerate here so it did not double accelerate in the stance function.
 		if (m_bCrouched)
 		{
+			// Checks if the player is crouched and does the acceleration needed
 			Accelerate(v3DesDir, fDesSpeed *= m_fCrouchSpeed, m_fGroundAcceleration);
 		}
 		if (m_bProned)
 		{
+			// Checks if the player is proned and does the acceleration needed
 			Accelerate(v3DesDir, fDesSpeed *= m_fProneSpeed, m_fGroundAcceleration);
 		}
 		if (m_bWalk && !m_bCrouched && !m_bProned)
 		{
+			// Checks if the player is walking and does the acceleration needed
 			Accelerate(v3DesDir, fDesSpeed *= m_fWalkSpeed, m_fGroundAcceleration);
 		}
 		if (m_bRun && !m_bCrouched && !m_bProned)
 		{
+			// Checks if the player is running and does the acceleration needed
 			Accelerate(v3DesDir, fDesSpeed *= m_fRunSpeed, m_fGroundAcceleration);
 		}
 
 		m_fFriction = m_fOriginalFriction;
 
+		// if the player can jump and it is not disabled then checks if it needs to be held or pressed and does jump code
 		if(m_bCanJump && !m_bDisableJump)
 		{
 			if(m_bHoldToJump)
 			{
 				// Checks if the jump button is pressed and the player is not proned then jumps
-				// Applies friction to the player to slow down their momentum HERE why is sprint jumping adding friction and not normal jumping, needs to check for 
-				if (Input.GetKey(m_jump) && !m_bProned /*&& !m_bSliding*/)
+				// Applies friction to the player to slow down their momentum 
+				if (Input.GetKey(m_jump) && !m_bProned)
 				{
 					m_v3PlayerVelocity.y = m_fJumpSpeed;
 					m_bIsJumping = true;
@@ -444,7 +496,7 @@ public class MyPlayer : MonoBehaviour
 			{
 				// Checks if the jump button is pressed and the player is not proned then jumps
 				// Applies friction to the player to slow down their momentum
-				if (Input.GetKeyDown(m_jump) && !m_bProned /*&& !m_bSliding*/)
+				if (Input.GetKeyDown(m_jump) && !m_bProned)
 				{
 					m_v3PlayerVelocity.y = m_fJumpSpeed;
 					m_bIsJumping = true;
@@ -457,19 +509,7 @@ public class MyPlayer : MonoBehaviour
 		}
 		else
 			ApplyFriction(1.0f);
-	}
-
-	private bool OnSlope()
-	{
-		RaycastHit _hit;
-		if(Physics.Raycast(transform.position, Vector3.down, out _hit, FPSCC.height / 2 * m_fSlopeRayLength))
-		{
-			if(_hit.normal != Vector3.up)
-			{
-				return true;
-			}
-		}
-		return false;
+		// HERE maybe change 1.0f to m_fFriction
 	}
 
 	//--------------------------------------------------------------------------------
@@ -559,109 +599,136 @@ public class MyPlayer : MonoBehaviour
 		m_cameraTransform.position = Vector3.Lerp(m_cameraTransform.position, m_v3NextCameraPos, m_fCameraChangeStanceSpeed);
 	}
 
+	//--------------------------------------------------------------------------------
+	// Makes the player crouch, while checking if the player is able to stand by
+	// doing a sphere cast above checking if it hits anything
+	//--------------------------------------------------------------------------------
 	private void Crouch()
 	{
+		// used to store hit data on the spherecast
+		RaycastHit _hit;
 		if(m_bHoldToCrouch)
 		{
-			if (Input.GetKey(m_crouch))
+			// if the player is holding the crouch button and there is nothing above the player incase the player was prone
+			if (Input.GetKey(m_crouch) && !Physics.SphereCast(transform.position, FPSCC.radius, Vector3.up, out _hit, m_proneHeight))
 			{
+				// now the player should be crouching
 				m_bCrouched = true;
+				// and if the player was prone then they no longer are
 				m_bProned = false;
-				FPSCC.height = m_crouchHeight;
 			}
-			else if (m_bCrouched && !Physics.Raycast(m_cameraTransform.position, Vector3.up, 0.75f))
+			// if the player lets go of crouch and there is nothing above them then they should stand
+			else if (m_bCrouched && !Physics.SphereCast(transform.position, FPSCC.radius, Vector3.up, out _hit, m_crouchHeight))
 			{
 				m_bCrouched = false;
-				FPSCC.height = m_standingHeight;
 			}
 		}
 		else if(!m_bHoldToCrouch)
 		{
-			if (Input.GetKeyDown(m_crouch) && !m_bCrouched)
+			// if the player is presses the crouch button and there is nothing above the player incase the player was prone
+			if (Input.GetKeyDown(m_crouch) && !m_bCrouched && !Physics.SphereCast(transform.position, FPSCC.radius, Vector3.up, out _hit, m_proneHeight))
 			{
+				// now the player should be crouching
 				m_bCrouched = true;
+				// and if the player was prone then they no longer are
 				m_bProned = false;
-				FPSCC.height = m_crouchHeight;
 			}
-			else if (Input.GetKeyDown(m_crouch) && m_bCrouched && !Physics.Raycast(m_cameraTransform.position, Vector3.up, 0.75f))
+			// if the player is presses the crouch button again to uncrouch and there is nothing above them then uncrouch
+			else if (Input.GetKeyDown(m_crouch) && m_bCrouched && !Physics.SphereCast(transform.position, FPSCC.radius, Vector3.up, out _hit, m_crouchHeight))
 			{
 				m_bCrouched = false;
-				FPSCC.height = m_standingHeight;
 			}
 		}
-		
 	}
 
+	//--------------------------------------------------------------------------------
+	// Makes the player prone, while checking if the player is able to stand by
+	// doing a sphere cast above checking if it hits anything
+	//--------------------------------------------------------------------------------
 	private void Prone()
 	{
+		// checks if grounded as prone can only happen if on ground
 		if(FPSCC.isGrounded)
 		{
-			if(m_bHoldToProne)
+			// used to store hit data on the spherecast
+			RaycastHit _hit;
+			if (m_bHoldToProne)
 			{
+				// if the player is holding the prone button
 				if (Input.GetKey(m_prone))
 				{
+					// the player should now prone
 					m_bProned = true;
+					// and if they were crouched it should now be false
 					m_bCrouched = false;
-					FPSCC.height = m_proneHeight;
 				}
-				else if (m_bProned && !Physics.Raycast(m_cameraTransform.position, Vector3.up, 1.5f))
+				// if the player releases the prone button and there is nothing above then they stand
+				else if (m_bProned && !Physics.SphereCast(transform.position, FPSCC.radius, Vector3.up, out _hit, m_crouchHeight))
 				{
 					m_bProned = false;
-					FPSCC.height = m_standingHeight;
 				}
 			}
 			else if(!m_bHoldToProne)
 			{
+				// if the player is presses the prone button
 				if (Input.GetKeyDown(m_prone) && !m_bProned)
 				{
+					// the player should now prone
 					m_bProned = true;
+					// and if they were crouched it should now be false
 					m_bCrouched = false;
-					FPSCC.height = m_proneHeight;
 				}
-				else if (Input.GetKeyDown(m_prone) && m_bProned && !Physics.Raycast(m_cameraTransform.position, Vector3.up, 1.5f))
+				// if the player is presses the prone button again to unprone and there is nothing above them then stand
+				else if (Input.GetKeyDown(m_prone) && m_bProned && !Physics.SphereCast(transform.position, FPSCC.radius, Vector3.up, out _hit, m_crouchHeight))
 				{
 					m_bProned = false;
-					FPSCC.height = m_standingHeight;
 				}
-				RaycastHit _hit;
-				Physics.Raycast(m_cameraTransform.position, Vector3.up, out _hit, 1.5f);
-				//Debug.Log();
-				//HERE prone detects somthing above
-				//HERE and sliding on slopes contiunes which should stop if there is sprinting speed reaching low vel
-				//HERE moving when sliding on slope allows to keep sliding up the slope and in directions
 			}
 		}
 	}
 
+	//--------------------------------------------------------------------------------
+	// Makes the player sprint or walk, checks if there is anything above the player
+	// if not makes them stand up and sprint.
+	//--------------------------------------------------------------------------------
 	private void Sprint()
 	{
-		if(m_bHoldToSprint)
+		// used to store hit data on the spherecast
+		RaycastHit _hit;
+		if (m_bHoldToSprint)
 		{
+			// checks if sprint is being held, and sprinting to walk is false, also the player is not sliding
 			if (Input.GetKey(m_sprint) && !m_bSprintToWalk && !m_bSlide)
 			{
-				if (m_bProned && Physics.Raycast(m_cameraTransform.position, Vector3.up, 1.5f) || m_bCrouched && Physics.Raycast(m_cameraTransform.position, Vector3.up, 0.75f))
+				// checks if the player is in a different stance and if being blocked by something then they cant stand and sprint
+				if (m_bProned && Physics.SphereCast(transform.position, FPSCC.radius, Vector3.up, out _hit, m_crouchHeight) || m_bCrouched && Physics.SphereCast(transform.position, FPSCC.radius, Vector3.up, out _hit, m_crouchHeight))
 				{
 					m_bRun = false;
 				}
+				// if the player is in a different stance and theres nothing blocking them then they stand and sprint
 				else
 				{
+					// the player should now stand and sprint 
 					m_bRun = true;
+					// walking, prone and crouch should all now be false
 					m_bWalk = false;
 					m_bProned = false;
 					m_bCrouched = false;
-					FPSCC.height = m_standingHeight;
 				}
 			}
+			// if the player is no longer holding sprint set the player to walking
 			else if (!m_bSprintToWalk && m_bRun)
 			{
 				m_bWalk = true;
 				m_bRun = false;
 			}
+			// if sprint to walk is true then the player walks when the sprint button is held
 			if (Input.GetKey(m_sprint) && m_bSprintToWalk)
 			{
 				m_bWalk = true;
 				m_bRun = false;
 			}
+			// if the player is not holding sprint to walk then they are running
 			else if (m_bSprintToWalk && m_bWalk)
 			{
 				m_bWalk = false;
@@ -670,31 +737,38 @@ public class MyPlayer : MonoBehaviour
 		}
 		else if(!m_bHoldToSprint)
 		{
+			// checks if sprint is pressed, and sprinting to walk is false, also the player is not already running
 			if (Input.GetKeyDown(m_sprint) && !m_bSprintToWalk && !m_bRun)
 			{
-				if (m_bProned && Physics.Raycast(m_cameraTransform.position, Vector3.up, 1.5f) || m_bCrouched && Physics.Raycast(m_cameraTransform.position, Vector3.up, 0.75f))
+				// checks if the player is in a different stance and if being blocked by something then they cant stand and sprint
+				if (m_bProned && Physics.SphereCast(transform.position, FPSCC.radius, Vector3.up, out _hit, m_crouchHeight) || m_bCrouched && Physics.SphereCast(transform.position, FPSCC.radius, Vector3.up, out _hit, m_crouchHeight))
 				{
 					m_bRun = false;
 				}
+				// if the player is in a different stance and theres nothing blocking them then they stand and sprint
 				else
 				{
+					// the player should now stand and sprint 
 					m_bRun = true;
+					// walking, prone and crouch should all now be false
 					m_bWalk = false;
 					m_bProned = false;
 					m_bCrouched = false;
-					FPSCC.height = m_standingHeight;
 				}
 			}
+			// if the player presses the sprint button again then and they are already sprinting then they walk
 			else if (Input.GetKeyDown(m_sprint) && !m_bSprintToWalk && m_bRun)
 			{
 				m_bWalk = true;
 				m_bRun = false;
 			}
+			// if sprint to walk is true then the player walks when the sprint button is pressed
 			if (Input.GetKeyDown(m_sprint) && m_bSprintToWalk && !m_bWalk)
 			{
 				m_bWalk = true;
 				m_bRun = false;
 			}
+			// if the player presses the sprint button again then and they are already walking then they run
 			else if (Input.GetKeyDown(m_sprint) && m_bSprintToWalk && m_bWalk)
 			{
 				m_bWalk = false;
@@ -702,11 +776,16 @@ public class MyPlayer : MonoBehaviour
 			}
 		}
 	}
-	//Here split slide into 2 onslope and slide
+
+	//--------------------------------------------------------------------------------
+	// Makes the player do a power slide, if the player is on a slope then they will 
+	// slide down the slope or will attempt to slide up it and stop.
+	//--------------------------------------------------------------------------------
 	private void Slide()
 	{
 		if(FPSCC.isGrounded)
 		{
+			// if the player is sprinting and goes to crouch then a slide should happen, so slide is true
 			if(m_bRun && m_bCrouched)
 			{
 				m_bSlide = true;
@@ -714,10 +793,9 @@ public class MyPlayer : MonoBehaviour
 			// if crouch is held and player is over a certain mementum or velocity
 			if(m_bCrouched && Mathf.Abs(m_v3PlayerVelocity.x) > m_fSpeedToStartSlide || m_bCrouched && Mathf.Abs(m_v3PlayerVelocity.z) > m_fSpeedToStartSlide)
 			{
-				//-------------if we are on a slideable slope then slide down slope-------------
+				// if the player is on a slope and the angle is over the slope limit then the player should slide down the slope
 				if (OnSlope() && Vector3.Angle(m_v3HitPointNormal, Vector3.up) > m_fSlideSlopeLimit)
 				{
-					Debug.Log(Vector3.Angle(m_v3HitPointNormal, Vector3.up));
 					// Stores the direction the player wants to move
 					Vector3 v3DesDir;
 					// Sets the desired direction based on the velocity
@@ -725,79 +803,125 @@ public class MyPlayer : MonoBehaviour
 					// Sets the desired speed
 					var fDesSpeed = v3DesDir.magnitude;
 
+					// checks if it is the start of the slide
 					if (m_bSlideStart)
 					{
+						// stores the original speed.
 						m_fOriginalSlideSpeed = m_fSlideSpeed;
+						// sets start of the slide to false
 						m_bSlideStart = false;
 					}
-
+					// gets the hit point normal
 					m_v3HitPointNormal = SlopeHit().normal;
+					// makes the player slide in the down direction of the object using the hit normal
 					m_v3PlayerVelocity += new Vector3(m_v3HitPointNormal.x, -m_v3HitPointNormal.y, m_v3HitPointNormal.z) * m_fSlideSlopeSpeed;
-
+					// Checks if the player have moved up or down on the slope from last frame
 					if (m_fOldYPos < transform.position.y)
 					{
+						// if we are goin up then slow the player down faster so they cant slide up hill
 						m_fSlideSpeed -= m_fSlideDeceleration * Time.deltaTime;
 					}
 					else if (m_fOldYPos > transform.position.y)
 					{
+						// if the player is going down hill then make them slide down using the slope angle of the hill for the speed
 						m_fSlideSpeed = Vector3.Angle(m_v3HitPointNormal, Vector3.up);
 					}
-
+					// if the speed reaches below 0 then set it to 0
 					if (m_fSlideSpeed <= 0)
 					{
 						m_fSlideSpeed = 0;
 					}
+					// if the speed reaches above ogriginal speed then it capes the speed to that making it have a max speed
 					if (m_fSlideSpeed >= m_fOriginalSlideSpeed)
 					{
 						m_fSlideSpeed = m_fOriginalSlideSpeed;
 					}
-
+					// Accelerate the player to start the slide and continue the slide
 					Accelerate(v3DesDir, fDesSpeed * m_fSlideSpeed, m_fSlideAcceleration);
-
+					// sets old y pos to the current y pos so next frame it can tell if it is going up or down
 					m_fOldYPos = transform.position.y;
 				}
+				// the player does a slide which does not go down slopes
 				else
 				{
-					//---------increase speed or vel in the direction of last mevement inptu---------
 					// Stores the direction the player wants to move
 					Vector3 v3DesDir;
 					// Sets the desired direction based on the velocity
 					v3DesDir = new Vector3(m_v3PlayerVelocity.x, 0, m_v3PlayerVelocity.z);
 					// Sets the desired speed
 					var fDesSpeed = v3DesDir.magnitude;
-
+					// Accelerate the player to start the slide and continue the slide
 					Accelerate(v3DesDir, fDesSpeed * m_fSlideSpeed, m_fSlideAcceleration);
-
+					// checks if it is the start of the slide
 					if (m_bSlideStart)
 					{
+						// stores the original speed.
 						m_fOriginalSlideSpeed = m_fSlideSpeed;
+						// sets start of the slide to false
 						m_bSlideStart = false;
 					}
-
+					// slows the slide speed down making the player eventually stop sliding
 					m_fSlideSpeed -= m_fSlideSpeed * Time.deltaTime;
-
+					// if the speed reaches below 0 then set it to 0
 					if (m_fSlideSpeed < 0)
 					{
 						m_fSlideSpeed = 0;
 					}
 				}
 			}
+			// if the player is no longer crouched or has fallen under a certain speed then the slide is finished
 			else if(!m_bCrouched || m_bCrouched && Mathf.Abs(m_v3PlayerVelocity.x) <= m_fSpeedToStartSlide || m_bCrouched && Mathf.Abs(m_v3PlayerVelocity.z) <= m_fSpeedToStartSlide)
 			{
+				// if it is not the start of a slide and we have cancelled a slide reset the slide speed to original
 				if(!m_bSlideStart)
 				{
 					m_fSlideSpeed = m_fOriginalSlideSpeed;
 				}
+				// sets slide start back to true as the next time a slide happens it should be a new slide
 				m_bSlideStart = true;
+				// sliding is false as the player has stopped sliding
 				m_bSlide = false;
 			}
 		}
 	}
+
+	//--------------------------------------------------------------------------------
+	// Checks if the player is on a slope by checking if the normal is equal to the 
+	// objects up.
+	//
+	// Return:
+	//		bool: returns true or false if the player is on a slope 
+	//
+	//--------------------------------------------------------------------------------
+	private bool OnSlope()
+	{
+		RaycastHit _hit;
+		// Raycast down from half the player height by the slope ray length to see if there is an object
+		if (Physics.Raycast(transform.position, Vector3.down, out _hit, FPSCC.height / 2 * m_fSlopeRayLength))
+		{
+			// if there is an object and the normal is not equal to up then the player is on a slope
+			if (_hit.normal != Vector3.up)
+			{
+				return true;
+			}
+		}
+		// returns false if there is no object below the player that is angled
+		return false;
+	}
+
+	//--------------------------------------------------------------------------------
+	// Does a ray cast down and gets the hit information of the object
+	//
+	// Return:
+	//		 _hit: Is the object being hit by raycast.
+	//--------------------------------------------------------------------------------
 	private RaycastHit SlopeHit()
 	{
 		RaycastHit _hit;
+		// Raycast down from half the player height by the slope ray length to see if there is an object
 		if (Physics.Raycast(transform.position, Vector3.down, out _hit, FPSCC.height / 2 * m_fSlopeRayLength))
 		{
+			// if there is an object and the normal is not equal to up then return the hit information for that object
 			if (_hit.normal != Vector3.up)
 			{
 				return _hit;
@@ -808,11 +932,7 @@ public class MyPlayer : MonoBehaviour
 
 	//--------------------------------------------------------------------------------
 	// Changes the stance of the player from crouch to prone, standing, sprinting and
-	// sliding.
-	//
-	// Param:
-	//		v3DesDir: The desired direction the player should move
-	//		fDesSpeed: The desired speed the player should move at
+	// sliding if the player can do those functions.
 	//--------------------------------------------------------------------------------
 	private void ChangeStance()
 	{
@@ -833,6 +953,37 @@ public class MyPlayer : MonoBehaviour
 			Slide();
 		}
 	}
+
+	//private void OnTriggerEnter(Collider collision)
+	//{
+	//	if (collision.gameObject.layer != LayerMask.GetMask("Ground") && collision.gameObject.layer != LayerMask.GetMask("Player"))
+	//	{
+	//		m_v3PlayerVelocity = new Vector3(0, 0, 0);
+	//	}
+	//}
+
+	//--------------------------------------------------------------------------------
+	// Checks if the player controller is colliding and slows down if it is not the
+	// ground layer.
+	//
+	// Param:
+	//		hit: Is the object the collider is hitting used for info on the object
+	//--------------------------------------------------------------------------------
+	private void OnControllerColliderHit(ControllerColliderHit hit)
+	{
+		// used to check if there is an object above using sphere cast below
+		RaycastHit _hit;
+		if(!Physics.SphereCast(transform.position, FPSCC.radius, Vector3.up, out _hit, m_standingHeight))
+		{
+			// checks if the object being hit is on a certian layer
+			if (hit.gameObject.layer != 6)
+			{
+			// slows velocity down based on the hit normal 
+				Debug.Log(hit.gameObject.name);
+				m_v3PlayerVelocity -= hit.normal * Vector3.Dot(m_v3PlayerVelocity, hit.normal);
+			}
+		}
+	}
 }
-//HERE crouch/prone check up for objects need to be improved.
-//HERE make it so if sliding not on slope and input opiste direction slowdown
+//HERE if player runs into somthing it should stop vel going that way
+//HERE when sliding input to stop or slow down faster
